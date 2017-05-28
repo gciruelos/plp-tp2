@@ -1,10 +1,9 @@
 %Prolog vieja
 
+%ej. 1
 herramienta(rayo, 10).
 herramienta(volatilizador, 40).
 herramienta(encendedor, 5).
-
-jerarquica(X, Y) :- (herramienta(X, _); X = jerarquica(_, _)), (herramienta(Y, _); Y = jerarquica(_, _)).
 
 costo(X, 1) :- herramienta(X, _).
 costo(Z, C) :- Z = jerarquica(X, Y), costo(X, CX), costo(Y, CY), C is 2 * (CX + CY).
@@ -12,4 +11,12 @@ costo(Z, C) :- Z = jerarquica(X, Y), costo(X, CX), costo(Y, CY), C is 2 * (CX + 
 potencial(X, PX) :- herramienta(X, PX).
 potencial(Z, P) :- Z = jerarquica(X, Y), potencial(X, PX), potencial(Y, PY), P is PX * PY.
 
+jerarquica(X, Y) :- (herramienta(X, _); X = jerarquica(_, _)), (herramienta(Y, _); Y = jerarquica(_, _)).
+
 composicion(Z, P, C) :- Z = jerarquica(_, _), potencial(Z, P), costo(Z, C).
+
+%ej. 2
+componentes(Z, CZ) :- herramienta(Z, _), CZ = [Z].
+componentes(Z, CZ) :- Z = jerarquica(X, Y), componentes(X, CX), componentes(Y, CY), append(CX, CY, CZ).
+
+configuracion(M, Conf, P, C) :- componentes(Conf, M1), permutation(M, M1), composicion(Conf, P, C).
