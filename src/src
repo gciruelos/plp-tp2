@@ -16,7 +16,10 @@ jerarquica(X, Y) :- (herramienta(X, _); X = jerarquica(_, _)), (herramienta(Y, _
 composicion(Z, P, C) :- Z = jerarquica(_, _), potencial(Z, P), costo(Z, C).
 
 %ej. 2
-componentes(Z, CZ) :- herramienta(Z, _), CZ = [Z].
-componentes(Z, CZ) :- Z = jerarquica(X, Y), componentes(X, CX), componentes(Y, CY), append(CX, CY, CZ).
+componentes(Z, [Z]) :- herramienta(Z, _).
+componentes(Z, CZ) :- CZ \= [], append(CX, CY, CZ), CX \= [], CY \= [], componentes(X, CX), componentes(Y, CY), Z = jerarquica(X, Y).
 
-configuracion(M, Conf, P, C) :- componentes(Conf, M1), permutation(M, M1), composicion(Conf, P, C).
+configuracion(M, Conf, P, C) :- permutation(M, M1), componentes(Conf, M1), composicion(Conf, P, C).
+
+%ej. 3
+masPoderosa(M1,M2) :- configuracion(M1, _, P, _), forall(configuracion(M2, _, PPrima, _), P > PPrima).
