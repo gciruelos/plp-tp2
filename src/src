@@ -1,6 +1,6 @@
-%Prolog vieja
+% Prolog vieja
 
-%ej. 1
+% ej. 1
 herramienta(rayo, 10).
 herramienta(volatilizador, 40).
 herramienta(encendedor, 5).
@@ -15,11 +15,25 @@ jerarquica(X, Y) :- (herramienta(X, _); X = jerarquica(_, _)), (herramienta(Y, _
 
 composicion(Z, P, C) :- Z = jerarquica(_, _), potencial(Z, P), costo(Z, C).
 
-%ej. 2
+% ej. 2
+% componentes(+Z, ?CZ)
 componentes(Z, [Z]) :- herramienta(Z, _).
-componentes(Z, CZ) :- CZ \= [], append(CX, CY, CZ), CX \= [], CY \= [], componentes(X, CX), componentes(Y, CY), Z = jerarquica(X, Y).
+componentes(Z, CZ) :- CZ \= [], permutation(W,CZ), append(CX, CY, W), CX \= [], CY \= [], componentes(X, CX), componentes(Y, CY), Z = jerarquica(X, Y).
 
-configuracion(M, Conf, P, C) :- permutation(M, M1), componentes(Conf, M1), composicion(Conf, P, C).
 
-%ej. 3
+% configuracion(?, ?, ?, ?)
+configuracion([X], X, P, 1) :- herramienta(X, P).
+configuracion(M, Conf, P, C) :- componentes(Conf, M), composicion(Conf, P, C).
+
+% ej. 3
+% masPoderosa(?M1, +M2)
 masPoderosa(M1,M2) :- configuracion(M1, _, P, _), forall(configuracion(M2, _, PPrima, _), P > PPrima).
+
+% ej. 4
+% mejor(+M1, +M2)
+mejor(M1, M2) :- forall(configuracion(M2, _, C2, P2), (configuracion(M1, _, C1, P1), P1 >= P2, C1 < C2)).
+
+% ej. 5
+confP(M, A, _, _) :- configuracion(M, A, _, _), !.
+concatComponentes([C], X) :- configuracion(X, C, _, _).
+%concatComponentes([A | B], X) :- M \= [], configuracion(M, A, _, _), concatComponentes(B, Y), append(M, Y, X).
