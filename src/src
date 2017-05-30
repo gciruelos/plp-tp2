@@ -16,9 +16,19 @@ jerarquica(X, Y) :- (herramienta(X, _); X = jerarquica(_, _)), (herramienta(Y, _
 composicion(Z, P, C) :- Z = jerarquica(_, _), potencial(Z, P), costo(Z, C).
 
 % ej. 2
+
+
+%permute(+, ?)
+permute([], []).
+permute(L,[X|R]) :- omit(X,L,M), permute(M,R).
+
+%omit(?, +, ?)
+omit(H,[H|T],T).
+omit(X,[H|L],[H|R]) :- omit(X,L,R), X \= H.
+
 % componentes(+Z, ?CZ)
 componentes(Z, [Z]) :- herramienta(Z, _).
-componentes(Z, CZ) :- CZ \= [], permutation(W,CZ), append(CX, CY, W), CX \= [], CY \= [], componentes(X, CX), componentes(Y, CY), Z = jerarquica(X, Y).
+componentes(Z, CZ) :- CZ \= [], permutate(W,CZ), append(CX, CY, W), CX \= [], CY \= [], componentes(X, CX), componentes(Y, CY), Z = jerarquica(X, Y).
 
 
 % configuracion(?, ?, ?, ?)
