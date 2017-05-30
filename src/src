@@ -28,12 +28,12 @@ omit(X,[H|L],[H|R]) :- omit(X,L,R), X \= H.
 
 % componentes(+Z, ?CZ)
 componentes(Z, [Z]) :- herramienta(Z, _).
-componentes(Z, CZ) :- CZ \= [], permute(CZ,W), append(CX, CY, W), CX \= [], CY \= [], componentes(X, CX), componentes(Y, CY), Z = jerarquica(X, Y).
+componentes(Z, CZ) :- CZ \= [], append(CX, CY, CZ), CX \= [], CY \= [], componentes(X, CX), componentes(Y, CY), Z = jerarquica(X, Y).
 
 
 % configuracion(?, ?, ?, ?)
 configuracion([X], X, P, 1) :- herramienta(X, P).
-configuracion(M, Conf, P, C) :- componentes(Conf, M), composicion(Conf, P, C).
+configuracion(M, Conf, P, C) :- permute(M, M1), componentes(Conf, M1), composicion(Conf, P, C).
 
 % ej. 3
 % masPoderosa(?M1, +M2)
