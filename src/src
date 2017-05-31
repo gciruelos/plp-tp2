@@ -28,7 +28,8 @@ omit(X,[H|L],[H|R]) :- omit(X,L,R), X \= H.
 
 % componentes(+Z, ?CZ)
 componentes(Z, [Z]) :- herramienta(Z, _).
-componentes(Z, CZ) :- CZ \= [], append(CX, CY, CZ), CX \= [], CY \= [], componentes(X, CX), componentes(Y, CY), Z = jerarquica(X, Y).
+componentes(binaria(X,Y), [X,Y]) :- herramienta(X, _), herramienta(Y, _).
+componentes(jerarquica(X, Y), CZ) :- CZ \= [], append(CX, CY, CZ), CX \= [], CY \= [], componentes(X, CX), componentes(Y, CY).
 
 
 % configuracion(?, ?, ?, ?)
