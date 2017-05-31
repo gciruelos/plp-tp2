@@ -5,15 +5,12 @@ herramienta(rayo, 10).
 herramienta(volatilizador, 40).
 herramienta(encendedor, 5).
 
-costo(X, 1) :- herramienta(X, _).
-costo(Z, C) :- Z = jerarquica(X, Y), costo(X, CX), costo(Y, CY), C is 2 * (CX + CY).
-
-potencial(X, PX) :- herramienta(X, PX).
-potencial(Z, P) :- Z = jerarquica(X, Y), potencial(X, PX), potencial(Y, PY), P is PX * PY.
-
 jerarquica(X, Y) :- (herramienta(X, _); X = jerarquica(_, _)), (herramienta(Y, _); Y = jerarquica(_, _)).
 
-composicion(Z, P, C) :- Z = jerarquica(_, _), potencial(Z, P), costo(Z, C).
+%no se si esta bien decir esto, porque una herramienta no es una composicion:
+composicion(X, P, 1):- herramienta(X, P).
+composicion(binaria(X,Y),P,5):- herramienta(X, PX), herramienta(Y, PY), X\=encendedor, P is 2*PX + PY.
+composicion(jerarquica(X, Y), P, C) :- composicion(X, PX, CX), composicion(Y, PY, CY), P is PY * PX, C is 2*(CY+CX).
 
 % ej. 2
 
@@ -37,7 +34,7 @@ configuracion([X], X, P, 1) :- herramienta(X, P).
 configuracion(M, Conf, P, C) :- permute(M, M1), componentes(Conf, M1), composicion(Conf, P, C).
 
 % ej. 3
-% masPoderosa(?M1, +M2)
+% masPoderosa(+M1, +M2)
 masPoderosa(M1,M2) :- configuracion(M1, _, P, _), forall(configuracion(M2, _, PPrima, _), P > PPrima).
 
 % ej. 4
