@@ -42,10 +42,6 @@ masPoderosa(M1,M2) :- configuracion(M1, _, P, _), forall(configuracion(M2, _, PP
 mejor(M1, M2) :- forall(configuracion(M2, _, C2, P2), (configuracion(M1, _, C1, P1), P1 >= P2, C1 < C2)).
 
 % ej. 5
-confP(M, A, _, _) :- configuracion(M, A, _, _), !.
-concatComponentes([C], X) :- configuracion(X, C, _, _).
-%concatComponentes([A | B], X) :- M \= [], configuracion(M, A, _, _), concatComponentes(B, Y), append(M, Y, X).
-
 setMember(X, [C|_]) :- permute(X, C).
 setMember(X, [_|L]) :- setMember(X, L).
 
@@ -62,8 +58,8 @@ len([], 0).
 len([_|L], N) :- len(L, N1), N is N1 + 1.
 
 potencialesOk([],[],[]).
-potencialesOk([Pot|P],[Herr|H],[Conf|C]) :- configuracion(Herr, Conf, Pot1, _), Pot1 >= Pot, !, potencialesOk(P, H, C).
+potencialesOk([Pot|P],[Herr|H],[Conf|C]) :- configuracion(Herr, Conf, Pot1, _), Pot1 >= Pot, potencialesOk(P, H, C).
 
-usar(M1, Ps, Cs, Resto) :- len(Ps, Len1), S is Len1 + 1, partes(M1, S, Particion), permute(Particion, [RestoSet|ParticionShufleada]),
-permute(RestoSet, Resto), potencialesOk(Ps, ParticionShufleada, Cs).
+usarRepitiendo(M1, Ps, Resto, Cs) :- len(Ps, Len1), S is Len1 + 1, partes(M1, S, Particion), permute(Particion, [RestoSet|ParticionShufleada]), permute(RestoSet, Resto), potencialesOk(Ps, ParticionShufleada, Cs).
 
+usar(M1, Ps, Cs, Resto) :- setof((ConfRepe, RestoRepe), usarRepitiendo(M1, Ps, RestoRepe, ConfRepe), Confs), member((Cs, Resto), Confs).
