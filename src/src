@@ -60,7 +60,8 @@ mejor(M1, M2) :- forall(configuracion(M2, _, C2, P2),
     (configuracion(M1, _, C1, P1), P1 >= P2, C1 < C2)).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ej. 5 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% setMember(+X, +XS): setMember(X, XS) solo si la lista X es una permutacion de %                     una de las listas de XS (XS es una lista de listas).
+% setMember(+X, +XS): setMember(X, XS) solo si la lista X es una permutacion de
+%                     una de las listas de XS (XS es una lista de listas).
 %% Tecnicamente es (?, +), pero se cuelga.
 setMember(X, [C|_]) :- permute(X, C).
 setMember(X, [_|L]) :- setMember(X, L).
