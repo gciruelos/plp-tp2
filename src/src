@@ -63,3 +63,11 @@ potencialesOk([Pot|P],[Herr|H],[Conf|C]) :- configuracion(Herr, Conf, Pot1, _), 
 usarRepitiendo(M1, Ps, Resto, Cs) :- len(Ps, Len1), S is Len1 + 1, partes(M1, S, Particion), permute(Particion, [RestoSet|ParticionShufleada]), permute(RestoSet, Resto), potencialesOk(Ps, ParticionShufleada, Cs).
 
 usar(M1, Ps, Cs, Resto) :- setof((ConfRepe, RestoRepe), usarRepitiendo(M1, Ps, RestoRepe, ConfRepe), Confs), member((Cs, Resto), Confs).
+
+% ej. 6
+listaHerramientas(0, []).
+listaHerramientas(N, [X|L]) :- N > 0, herramienta(X, _), N1 is N - 1, listaHerramientas(N1, L).
+
+comprarRepitiendo(P, C, M) :- between(0, C, C1), listaHerramientas(C1, M), configuracion(M, _, Pot, _), Pot >= P.
+
+comprar(P, C, M) :- setof(M1, comprarRepitiendo(P, C, M1), Ms), member(M, Ms).
