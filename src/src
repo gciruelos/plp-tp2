@@ -1,53 +1,73 @@
 % Prolog vieja
 
-% ej. 1
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ej. 1 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 herramienta(rayo, 10).
 herramienta(volatilizador, 40).
 herramienta(encendedor, 5).
 
-jerarquica(X, Y) :- (herramienta(X, _); X = jerarquica(_, _)), (herramienta(Y, _); Y = jerarquica(_, _)).
+jerarquica(X, Y) :-
+    (herramienta(X, _); X = jerarquica(_, _)),
+    (herramienta(Y, _); Y = jerarquica(_, _)).
 
-%no se si esta bien decir esto, porque una herramienta no es una composicion:
+%% no se si esta bien decir esto, porque una herramienta no es una composicion:
 composicion(X, P, 1):- herramienta(X, P).
-composicion(binaria(X,Y),P,5):- herramienta(X, PX), herramienta(Y, PY), X\=encendedor, P is 2*PX + PY.
-composicion(jerarquica(X, Y), P, C) :- composicion(X, PX, CX), composicion(Y, PY, CY), P is PY * PX, C is 2*(CY+CX).
+composicion(binaria(X,Y),P,5):- herramienta(X, PX),
+                                herramienta(Y, PY),
+                                X\=encendedor, P is 2*PX + PY.
+composicion(jerarquica(X, Y), P, C) :-
+    composicion(X, PX, CX),
+    composicion(Y, PY, CY),
+    P is PY * PX,
+    C is 2*(CY+CX).
 
-% ej. 2
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ej. 2 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-%permute(+, ?)
+% permute(+, ?): permute(X,Y) <=> Y es permutacion de X.
 permute([], []).
 permute(L,[X|R]) :- omit(X,L,M), permute(M,R).
 
-%omit(?, +, ?)
+% omit(?, +, ?): omit(X,Y,Z) <=> Z es Y sin la primera aparicion de X.
 omit(H,[H|T],T).
 omit(X,[H|L],[H|R]) :- omit(X,L,R), X \= H.
 
-% componentes(+Z, ?CZ)
+% componentes(+Z, ?CZ): componentes(X, M) <=> M es la lista de componentes de X.
 componentes(Z, [Z]) :- herramienta(Z, _).
 componentes(binaria(X,Y), [X,Y]) :- herramienta(X, _), herramienta(Y, _).
-componentes(jerarquica(X, Y), CZ) :- CZ \= [], append(CX, CY, CZ), CX \= [], CY \= [], componentes(X, CX), componentes(Y, CY).
+componentes(jerarquica(X, Y), CZ) :- CZ \= [],
+    append(CX, CY, CZ),
+    CX \= [], CY \= [],
+    componentes(X, CX),
+    componentes(Y, CY).
 
+% configuracion(?M, ?Conf, ?P, ?C)
+%% esta linea creo que no va VVVVVVVVVVV por favor confirmar. Si la sacamos,
+%% dejamos de tener repetidos.
+% configuracion([X], X, P, 1) :- herramienta(X, P).
+configuracion(M, Conf, P, C) :- permute(M, M1),
+    componentes(Conf, M1),
+    composicion(Conf, P, C).
 
-% configuracion(?, ?, ?, ?)
-configuracion([X], X, P, 1) :- herramienta(X, P).
-configuracion(M, Conf, P, C) :- permute(M, M1), componentes(Conf, M1), composicion(Conf, P, C).
-
-% ej. 3
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ej. 3 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % masPoderosa(+M1, +M2)
-masPoderosa(M1,M2) :- configuracion(M1, _, P, _), forall(configuracion(M2, _, PPrima, _), P > PPrima).
+masPoderosa(M1,M2) :- configuracion(M1, _, P, _),
+    forall(configuracion(M2, _, PPrima, _), P > PPrima).
 
-% ej. 4
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ej. 4 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % mejor(+M1, +M2)
-mejor(M1, M2) :- forall(configuracion(M2, _, C2, P2), (configuracion(M1, _, C1, P1), P1 >= P2, C1 < C2)).
+% Ejemplo en el que da true: mejor([rayo, rayo], [volatilizador]).
+mejor(M1, M2) :- forall(configuracion(M2, _, C2, P2),
+    (configuracion(M1, _, C1, P1), P1 >= P2, C1 < C2)).
 
-% ej. 5
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ej. 5 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 setMember(X, [C|_]) :- permute(X, C).
 setMember(X, [_|L]) :- setMember(X, L).
 
 agregarAAlguno(A, [C], [[A|C]]).
-agregarAAlguno(A, [C|L], [C|M]) :- L\= [], not(setMember(C,L)), agregarAAlguno(A, L, M).
-agregarAAlguno(A, [C|L], [C|M]) :- L\= [], setMember(C,L), agregarAAlguno(A, L, M).
+agregarAAlguno(A, [C|L], [C|M]) :- L\= [], not(setMember(C,L)),
+    agregarAAlguno(A, L, M).
+agregarAAlguno(A, [C|L], [C|M]) :- L\= [], setMember(C,L),
+    agregarAAlguno(A, L, M).
 agregarAAlguno(A, [C|L], [[A|C]|L]) :- L\= [], not(setMember(C,L)).
 
 partes(L, 1, [L]).
@@ -58,16 +78,36 @@ len([], 0).
 len([_|L], N) :- len(L, N1), N is N1 + 1.
 
 potencialesOk([],[],[]).
-potencialesOk([Pot|P],[Herr|H],[Conf|C]) :- configuracion(Herr, Conf, Pot1, _), Pot1 >= Pot, potencialesOk(P, H, C).
+potencialesOk([Pot|P],[Herr|H],[Conf|C]) :-
+    configuracion(Herr, Conf, Pot1, _),
+    Pot1 >= Pot,
+    potencialesOk(P, H, C).
 
-usarRepitiendo(M1, Ps, Resto, Cs) :- len(Ps, Len1), S is Len1 + 1, partes(M1, S, Particion), permute(Particion, [RestoSet|ParticionShufleada]), permute(RestoSet, Resto), potencialesOk(Ps, ParticionShufleada, Cs).
+% usarRepitiendo(+M1, +Ps, ?resto, ?Cs)
+usarRepitiendo(M1, Ps, Resto, Cs) :-
+    len(Ps, Len1), S is Len1 + 1,
+    partes(M1, S, Particion),
+    permute(Particion, [RestoSet|ParticionShufleada]),
+    permute(RestoSet, Resto),
+    potencialesOk(Ps, ParticionShufleada, Cs).
 
-usar(M1, Ps, Cs, Resto) :- setof((ConfRepe, RestoRepe), usarRepitiendo(M1, Ps, RestoRepe, ConfRepe), Confs), member((Cs, Resto), Confs).
+% usar(+M1, +Ps, ?Cs, ?M2)
+usar(M1, Ps, Cs, Resto) :-
+    setof((ConfRepe, RestoRepe),
+          usarRepitiendo(M1, Ps, RestoRepe, ConfRepe),
+          Confs),
+    member((Cs, Resto), Confs).
 
-% ej. 6
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ej. 6 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 listaHerramientas(0, []).
-listaHerramientas(N, [X|L]) :- N > 0, herramienta(X, _), N1 is N - 1, listaHerramientas(N1, L).
+listaHerramientas(N, [X|L]) :- N > 0, herramienta(X, _),
+    N1 is N - 1, listaHerramientas(N1, L).
 
-comprarRepitiendo(P, C, M) :- between(0, C, C1), listaHerramientas(C1, M), configuracion(M, _, Pot, _), Pot >= P.
+comprarRepitiendo(P, C, M) :-
+    between(0, C, C1),
+    listaHerramientas(C1, M),
+    configuracion(M, _, Pot, _),
+    Pot >= P.
 
+% comprar(+P, +C, ?M)
 comprar(P, C, M) :- setof(M1, comprarRepitiendo(P, C, M1), Ms), member(M, Ms).
