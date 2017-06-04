@@ -81,7 +81,7 @@ agregarAAlguno(A, [C|L], [[A|C]|L]) :- L\= [], not(setMember(C,L)).
 %% no estaria copado que fuera ?N ?
 partes(L, 1, [L]).
 partes([X|L], S, Ps) :- S > 1, partes(L, S, P1), agregarAAlguno(X, P1, Ps).
-partes([X|L], S, [[X]|Ps1]) :- L \= [], S1 is S - 1, partes(L, S1, Ps1).
+partes([X|L], S, [[X]|Ps1]) :- S1 is S - 1, partes(L, S1, Ps1).
 
 % len(?X, ?N): largo de una lista.
 len([], 0).
