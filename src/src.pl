@@ -62,7 +62,6 @@ mejor(M1, M2) :- forall(configuracion(M2, _, C2, P2),
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ej. 5 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % setMember(+X, +XS): setMember(X, XS) solo si la lista X es una permutacion de
 %                     una de las listas de XS (XS es una lista de listas).
-%% Tecnicamente es (?, +), pero se cuelga.
 setMember(X, [C|_]) :- permute(X, C).
 setMember(X, [_|L]) :- setMember(X, L).
 
@@ -78,7 +77,6 @@ agregarAAlguno(A, [C|L], [[A|C]|L]) :- L\= [], not(setMember(C,L)).
 
 % partes(+X, +N, ?XS): partes(X,N,XS) si y solo si XS tiene largo N y
 %                      permute(concat(XS), X) (concat como en haskell).
-%% no estaria copado que fuera ?N ?
 partes(L, 1, [L]).
 partes([X|L], S, Ps) :- S > 1, partes(L, S, P1), agregarAAlguno(X, P1, Ps).
 partes([X|L], S, [[X]|Ps1]) :- S1 is S - 1, partes(L, S1, Ps1).
@@ -97,8 +95,8 @@ potencialesOk([Pot|P],[Herr|H],[Conf|C]) :-
     Pot1 >= Pot,
     potencialesOk(P, H, C).
 
-% usarRepitiendo(+M1, +Ps, ?resto, ?Cs): ???
-%% completar
+% usarRepitiendo(+M1, +Ps, ?resto, ?Cs): igual que usar pero potencialmente con
+%                                        repetidos.
 usarRepitiendo(M1, Ps, Resto, Cs) :-
     len(Ps, Len1), S is Len1 + 1,
     partes(M1, S, Particion),
