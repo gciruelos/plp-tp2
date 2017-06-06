@@ -41,9 +41,6 @@ componentes(jerarquica(X, Y), CZ) :- CZ \= [],
     componentes(Y, CY).
 
 % configuracion(?M, ?Conf, ?P, ?C)
-%% esta linea creo que no va VVVVVVVVVVV por favor confirmar. Si la sacamos,
-%% dejamos de tener repetidos.
-% configuracion([X], X, P, 1) :- herramienta(X, P).
 configuracion(M, Conf, P, C) :- permute(M, M1),
     componentes(Conf, M1),
     composicion(Conf, P, C).
